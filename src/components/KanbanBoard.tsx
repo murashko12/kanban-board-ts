@@ -2,7 +2,7 @@ import { RiAddCircleLine } from "react-icons/ri";
 import { Column, Id } from "../types";
 import { useMemo, useState } from 'react'
 import ColumnContainer from "./ColumnContainer";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core'
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { createPortal } from "react-dom";
 
@@ -13,6 +13,14 @@ const KanbanBoard = () => {
     const columnsId = useMemo(() => columns.map((column) => column.id),[columns])
 
     const [activeColumn, setActiveColumn] = useState<Column | null>(null)
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 3
+            }
+        })
+    )
     
 // ========== FUNCTION IMPLEMENTATION ==========
     const createNewColumn = () => {
@@ -32,7 +40,6 @@ const KanbanBoard = () => {
     }
 
     const onDragStart = (event: DragStartEvent) => {
-        console.log(event);
         if (event.active.data.current?.type === "Column") {
             setActiveColumn(event.active.data.current.column)
             return
@@ -64,6 +71,7 @@ const KanbanBoard = () => {
     return (
         <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-10">
             <DndContext 
+                sensors={sensors}
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
             >
