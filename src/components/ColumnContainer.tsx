@@ -2,15 +2,19 @@ import { useSortable } from "@dnd-kit/sortable";
 import { Column, Id } from "../types";
 import { ImBin } from "react-icons/im";
 import { CSS } from "@dnd-kit/utilities"
+import { useState } from "react";
 
 interface IProps {
     column: Column;
+    updateColumn: (id: Id, title: string) => void;
     deleteColumn: (id: Id) => void;
 }
 
 const ColumnContainer = (props: IProps) => {
 
-    const {column, deleteColumn} = props
+    const {column, updateColumn, deleteColumn} = props
+
+    const [editMode, setEditMode] = useState(false)
 
     const {
         attributes,
@@ -24,7 +28,8 @@ const ColumnContainer = (props: IProps) => {
         data: {
             type: "Column",
             column,
-        }
+        },
+        disabled: editMode
     })
 
     const style = {
@@ -44,15 +49,36 @@ const ColumnContainer = (props: IProps) => {
         <div 
             ref={setNodeRef}
             style={style}
-            className="bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col shadow-xl"
+            className="bg-columnBackgroundColor w-[350px] h-[500px] max-h-[500px] rounded-xl flex flex-col shadow-xl"
         >
             <div 
                 {...attributes}
                 {...listeners}
+                onClick={() => {
+                    setEditMode(true)
+                }}
                 className="bg-mainBackgroundColor px-3 h-[60px] cursor-grab rounded-lg rounded-b-none border-columnBackgroundColor border-4 flex justify-between items-center"
             >
                 <div className="flex justify-center items-center bg-columnBackgroundColor h-8 w-8 text-md rounded-full">0</div>
-                {column.title}
+                
+
+                {!editMode && column.title}
+                {editMode 
+                    && 
+                    <input 
+                        className="outline-none bg-columnBackgroundColor border-2 py-1.5 px-2 border-rose-500 rounded-md"
+                        autoFocus 
+                        value={column.title}
+                        onChange={(e) => updateColumn(column.id, e.target.value)}
+                        onBlur={() => setEditMode(false)}
+                        onKeyDown={(e) => {
+                            if (e.key !== "Enter") return
+                            setEditMode(false)
+                        }}
+                    />
+                }
+                
+
                 <button 
                     onClick={() => deleteColumn(column.id)}
                     className="text-gray-500 px-1 py-2 rounded hover:text-white hover:bg-columnBackgroundColor"
