@@ -10,13 +10,15 @@ interface IProps {
     column: Column;
     updateColumn: (id: Id, title: string) => void;
     deleteColumn: (id: Id) => void;
+    
     createTask: (columnId: Id) => void;
+    deleteTask: (id: Id) => void;
     tasks: Task[];
 }
 
 const ColumnContainer = (props: IProps) => {
 
-    const {column, updateColumn, deleteColumn, createTask, tasks} = props
+    const {column, updateColumn, deleteColumn, createTask, tasks, deleteTask} = props
 
     const [editMode, setEditMode] = useState(false)
 
@@ -91,7 +93,10 @@ const ColumnContainer = (props: IProps) => {
             <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
                 {
                     tasks.map((task) => (
-                        <TaskCard key={task.id} task={task} />
+                        <TaskCard 
+                            key={task.id} 
+                            task={task} 
+                            deleteTask={deleteTask}/>
                     ))
                 }
             </div>

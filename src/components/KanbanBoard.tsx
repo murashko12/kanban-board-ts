@@ -60,6 +60,9 @@ const KanbanBoard = () => {
         setTasks([...tasks,newTask])
     }
 
+    const deleteTask = (id: Id) => {
+        setTasks(tasks.filter((task) => task.id !== id))
+    }
 
 
 // ======= DND =======
@@ -114,6 +117,7 @@ const KanbanBoard = () => {
                                         updateColumn={updateColumn}
                                         deleteColumn={deleteColumn}
                                         createTask={createTask}
+                                        deleteTask={deleteTask}
                                         tasks={tasks.filter((task) => task.columnId === column.id)}
                                     />
                                 ))
@@ -137,7 +141,8 @@ const KanbanBoard = () => {
                                 updateColumn={updateColumn}
                                 deleteColumn={deleteColumn}
                                 createTask={createTask}
-                                tasks={tasks}
+                                deleteTask={deleteTask}
+                                tasks={tasks.filter((task) => task.columnId === activeColumn.id)}    
                             />
                         )}
                     </DragOverlay>,
