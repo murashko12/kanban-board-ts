@@ -1,5 +1,5 @@
 import { RiAddCircleLine } from "react-icons/ri";
-import { Column, Id } from "../types";
+import { Column, Task, Id } from "../types";
 import { useMemo, useState } from 'react'
 import ColumnContainer from "./ColumnContainer";
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
@@ -9,6 +9,9 @@ import { createPortal } from "react-dom";
 const KanbanBoard = () => {
 
     const [columns, setColumns] = useState<Column[]>([])
+    const [tasks, setTasks] = useState<Task[]>([])
+
+
 
     const columnsId = useMemo(() => columns.map((column) => column.id),[columns])
 
@@ -36,13 +39,30 @@ const KanbanBoard = () => {
     }
 
     const updateColumn = (id: Id, title: string) => {
-        const newColumns = columns.map((column) => {
-            if (column.id !== id) return column
-            return {...column, title}
-        })
+        const newColumns = columns.map(
+            (column) => {
+                if (column.id !== id) return column
+                return {...column, title}
+                
+            }
+        )
         setColumns(newColumns)
     }
 
+    
+// ====== Tasks ======
+    const createTask = (columnId: Id) => {
+        const newTask: Task = {
+            id: generateId(),
+            columnId,
+            content: `Task ${tasks.length + 1}`,
+        }
+        setTasks([...tasks,newTask])
+    }
+
+
+
+// ======= DND =======
     const generateId = () => {
         return Math.floor(Math.random() * 10001)
     }
@@ -93,6 +113,8 @@ const KanbanBoard = () => {
                                         column={column}
                                         updateColumn={updateColumn}
                                         deleteColumn={deleteColumn}
+                                        createTask={createTask}
+                                        tasks={tasks.filter((task) => task.columnId === column.id)}
                                     />
                                 ))
                             }
@@ -114,6 +136,8 @@ const KanbanBoard = () => {
                                 column={activeColumn}
                                 updateColumn={updateColumn}
                                 deleteColumn={deleteColumn}
+                                createTask={createTask}
+                                tasks={tasks}
                             />
                         )}
                     </DragOverlay>,

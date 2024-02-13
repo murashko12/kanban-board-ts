@@ -1,18 +1,22 @@
 import { useSortable } from "@dnd-kit/sortable";
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 import { ImBin } from "react-icons/im";
 import { CSS } from "@dnd-kit/utilities"
 import { useState } from "react";
+import { RiAddCircleLine } from "react-icons/ri";
+import TaskCard from "./TaskCard";
 
 interface IProps {
     column: Column;
     updateColumn: (id: Id, title: string) => void;
     deleteColumn: (id: Id) => void;
+    createTask: (columnId: Id) => void;
+    tasks: Task[];
 }
 
 const ColumnContainer = (props: IProps) => {
 
-    const {column, updateColumn, deleteColumn} = props
+    const {column, updateColumn, deleteColumn, createTask, tasks} = props
 
     const [editMode, setEditMode] = useState(false)
 
@@ -57,11 +61,9 @@ const ColumnContainer = (props: IProps) => {
                 onClick={() => {
                     setEditMode(true)
                 }}
-                className="bg-mainBackgroundColor px-3 h-[60px] cursor-grab rounded-lg rounded-b-none border-columnBackgroundColor border-4 flex justify-between items-center"
+                className="bg-mainBackgroundColor px-3 h-[60px] cursor-grab rounded-lg rounded-b-none border-columnBackgroundColor border-4 flex justify-between items-center min-h-[60px]"
             >
                 <div className="flex justify-center items-center bg-columnBackgroundColor h-8 w-8 text-md rounded-full">0</div>
-                
-
                 {!editMode && column.title}
                 {editMode 
                     && 
@@ -77,20 +79,34 @@ const ColumnContainer = (props: IProps) => {
                         }}
                     />
                 }
-                
-
                 <button 
                     onClick={() => deleteColumn(column.id)}
-                    className="text-gray-500 px-1 py-2 rounded hover:text-white hover:bg-columnBackgroundColor"
+                    className="text-gray-500  px-1 py-2 rounded hover:text-white hover:bg-columnBackgroundColor"
                 >
                     <ImBin size={20} />
                 </button>    
             </div>
 
             {/* column task container */}
-            <div className="flex flex-grow">container</div>
+            <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+                {
+                    tasks.map((task) => (
+                        <TaskCard key={task.id} task={task} />
+                    ))
+                }
+            </div>
             {/* column footer */}
-            <div className="">footer</div>
+            <button 
+                className="
+                    flex gap-2 items-center p-4 border-4 border-columnBackgroundColor bg-mainBackgroundColor rounded-lg border-x-columnBackgroundColor
+                    hover:bg-mainBackgroundColor hover:text-rose-500
+                    active:bg-black
+                "
+                onClick={() => createTask(column.id)}
+            >
+                <RiAddCircleLine size={20} />
+                Add task
+            </button>
         </div>
     )
 }
