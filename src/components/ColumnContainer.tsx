@@ -11,14 +11,16 @@ interface IProps {
     updateColumn: (id: Id, title: string) => void;
     deleteColumn: (id: Id) => void;
     
+    tasks: Task[];
     createTask: (columnId: Id) => void;
     deleteTask: (id: Id) => void;
-    tasks: Task[];
+    updateTask: (id: Id, content: string) => void;
 }
 
 const ColumnContainer = (props: IProps) => {
 
-    const {column, updateColumn, deleteColumn, createTask, tasks, deleteTask} = props
+    const {column, updateColumn, deleteColumn, 
+           tasks, createTask, deleteTask, updateTask} = props
 
     const [editMode, setEditMode] = useState(false)
 
@@ -96,7 +98,9 @@ const ColumnContainer = (props: IProps) => {
                         <TaskCard 
                             key={task.id} 
                             task={task} 
-                            deleteTask={deleteTask}/>
+                            deleteTask={deleteTask}
+                            updateTask={updateTask}
+                        />
                     ))
                 }
             </div>
